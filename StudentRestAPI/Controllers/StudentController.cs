@@ -52,8 +52,16 @@ namespace StudentRestAPI.Controllers
 
         // PUT api/<StudentController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(string id, Student student)
         {
+           if (id != student.Id)
+            {
+                return BadRequest();
+            }
+
+            context.Entry(student).State = EntityState.Modified;
+            await context.SaveChangesAsync();
+            return NoContent();
         }
 
         // DELETE api/<StudentController>/5
