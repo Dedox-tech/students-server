@@ -29,7 +29,7 @@ namespace StudentRestAPI.Controllers
 
         // GET api/<StudentController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Student>> GetById(int id)
+        public async Task<ActionResult<Student>> GetById(string id)
         {
             var student = await context.Students.FindAsync(id);
 
@@ -58,8 +58,17 @@ namespace StudentRestAPI.Controllers
 
         // DELETE api/<StudentController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
+            var student = await context.Students.FindAsync(id);
+            if (student == null)
+            {
+                return NotFound();
+            }
+
+            context.Students.Remove(student);
+            await context.SaveChangesAsync();
+            return NoContent();
         }
     }
 }
