@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using StudentRestAPI.Data;
+using StudentRestAPI.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseInMemoryDatabase("StudentsDatabase"));
+builder.Services.AddTransient(typeof(IRepository<>),typeof(Repository<>));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

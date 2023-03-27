@@ -2,10 +2,8 @@
 
 namespace StudentRestAPI.Models
 {
-    public class Student
+    public class Student : BaseEntity
     {
-        [Required]
-        public string Id { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]

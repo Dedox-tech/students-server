@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using StudentRestAPI.Data;
 using StudentRestAPI.Models;
+using StudentRestAPI.Repository;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,70 +13,67 @@ namespace StudentRestAPI.Controllers
     public class StudentController : ControllerBase
     {
 
-        private readonly DatabaseContext context;
+        private readonly IRepository<Student> repository;
 
-        public StudentController (DatabaseContext context)
+        public StudentController (IRepository<Student> repository)
         {
-            this.context = context;
+            this.repository = repository;
         }
 
         // GET: api/<StudentController>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Student>>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var student = await context.Students.ToListAsync();
-            return student;
+            var students =  await repository.ReadAll();
+            return Ok(students);
         }
 
         // GET api/<StudentController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Student>> GetById(string id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var student = await context.Students.FindAsync(id);
+            var student = await repository.ReadOne(id);
 
             if (student == null)
             {
                 return NotFound();
             }
 
-            return student;
+            return Ok(student);
         }
 
         // POST api/<StudentController>
         [HttpPost]
-        public async Task<ActionResult<Student>> Post(Student student)
+        public async Task<IActionResult> Post(Student student)
         {
-            context.Students.Add(student);
-            await context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new {id = student.Id}, student);
+            await repository.Create(student);
+            return CreatedAtAction(nameof(GetById), new { id = student.Id }, student);
         }
 
         // PUT api/<StudentController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(string id, Student student)
+        public async Task<IActionResult> Put(int id, Student student)
         {
-           if (id != student.Id)
+            if (id != student.Id)
             {
                 return BadRequest();
             }
 
-            context.Entry(student).State = EntityState.Modified;
-            await context.SaveChangesAsync();
+            await repository.Update(student);
             return NoContent();
         }
 
         // DELETE api/<StudentController>/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var student = await context.Students.FindAsync(id);
+            var student = await repository.ReadOne(id);
             if (student == null)
             {
                 return NotFound();
             }
 
-            context.Students.Remove(student);
-            await context.SaveChangesAsync();
+            await repository.Delete(student);
             return NoContent();
         }
     }
