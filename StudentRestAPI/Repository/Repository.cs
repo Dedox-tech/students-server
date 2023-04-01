@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StudentRestAPI.Data;
 using StudentRestAPI.Models;
+using System.Linq.Expressions;
 
 namespace StudentRestAPI.Repository
 {
@@ -34,6 +35,11 @@ namespace StudentRestAPI.Repository
         public async Task<T> ReadOne(int id)
         {
             return await context.Set<T>().FindAsync(id);
+        }
+
+        public async Task<IEnumerable<T>> ReadByCriteria(Expression<Func<T, bool>> criteria)
+        {
+            return await context.Set<T>().Where(criteria).ToListAsync();
         }
 
         public async Task Update(T entity)

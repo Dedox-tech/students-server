@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using StudentRestAPI.Data;
 using StudentRestAPI.Models;
 using StudentRestAPI.Repository;
+using System.Linq.Expressions;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -40,6 +41,14 @@ namespace StudentRestAPI.Controllers
             }
 
             return Ok(student);
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchByName([FromQuery] string name)
+        {
+            Expression<Func<Student, bool>> criteria = (student) => student.Name.Contains(name);
+            var students = await repository.ReadByCriteria(criteria);
+            return Ok(students);
         }
 
         // POST api/<StudentController>
