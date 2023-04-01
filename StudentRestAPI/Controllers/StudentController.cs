@@ -43,6 +43,7 @@ namespace StudentRestAPI.Controllers
             return Ok(student);
         }
 
+        // GET api/<StudentController>/search?name=john
         [HttpGet("search")]
         public async Task<IActionResult> SearchByName([FromQuery] string name)
         {
